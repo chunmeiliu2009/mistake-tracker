@@ -35,7 +35,7 @@ def index():
 @login_required
 def dashboard():
     problems = Problem.query.filter_by(user_id=current_user.id).order_by(Problem.created_at.desc()).all()
-    return render_template('dashboard.html', problems=problems, config=app.config, os=os)
+    return render_template('dashboard.html', problems=problems)
 
 @app.route('/problem/new', methods=['GET', 'POST'])
 @login_required
@@ -45,9 +45,6 @@ def new_problem():
         filename = None
         if form.image.data:
             filename = save_file(form.image.data)
-            if not filename:
-                flash('Error uploading image. Please try again.', 'error')
-                return render_template('problem.html', form=form)
         
         problem = Problem(
             title=form.title.data,
@@ -63,7 +60,7 @@ def new_problem():
     return render_template('problem.html', form=form)
 
 # Create static/uploads directory if it doesn't exist
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+os.makedirs('static/uploads', exist_ok=True)
 
 # Initialize database
 with app.app_context():

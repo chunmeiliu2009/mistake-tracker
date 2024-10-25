@@ -4,16 +4,11 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(UserMixin, db.Model):
-    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
     problems = db.relationship('Problem', backref='user', lazy=True)
-
-    def __init__(self, username, email):
-        self.username = username
-        self.email = email
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -22,7 +17,6 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 class Problem(db.Model):
-    __tablename__ = 'problem'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     subject = db.Column(db.String(100), nullable=False)
@@ -30,10 +24,3 @@ class Problem(db.Model):
     image_path = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-    def __init__(self, title, subject, description, image_path, user_id):
-        self.title = title
-        self.subject = subject
-        self.description = description
-        self.image_path = image_path
-        self.user_id = user_id
