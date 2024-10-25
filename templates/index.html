@@ -16,12 +16,15 @@
         
         <div class="row g-4 py-4">
             {% set icons = {
-                'counting_and_probability': 'hash',
-                'number_theory': 'divide',
                 'algebra': 'x',
+                'counting_and_probability': 'hash',
                 'geometry': 'square',
+                'number_theory': 'divide',
+                'exponent': 'star',
                 'trigonometry': 'triangle',
-                'exponent': 'star'
+                'physics': 'activity',
+                'chemistry': 'flask',
+                'biology': 'heart'
             } %}
             
             {% for category_id, display_name in categories.items() %}
