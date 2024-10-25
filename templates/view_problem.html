@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title">{{ problem.title }}</h2>
+            <h6 class="card-subtitle mb-3 text-muted">{{ problem.subject }}</h6>
+            {% if problem.image_path %}
+            <img src="{{ url_for('static', filename='uploads/' + problem.image_path) }}" 
+                 class="img-fluid mb-3" alt="Problem image">
+            {% endif %}
+            <p class="card-text">{{ problem.description }}</p>
+            <div class="text-muted small mb-3">Added {{ problem.created_at.strftime('%Y-%m-%d') }}</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title h5 mb-4">Comments</h3>
+            
+            {% if problem.comments %}
+                {% for comment in problem.comments %}
+                <div class="mb-3 pb-3 border-bottom">
+                    <p class="mb-1">{{ comment.content }}</p>
+                    <div class="text-muted small">
+                        By {{ comment.author.username }} on {{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No comments yet.</p>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('add_comment', problem_id=problem.id) }}" class="mt-4">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.content.label(class="form-label") }}
+                    {{ form.content(class="form-control", rows=3) }}
+                </div>
+                <button type="submit" class="btn btn-primary">Add Comment</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
