@@ -24,6 +24,3 @@ class ProblemForm(FlaskForm):
     ])
     description = TextAreaField('Description')
     image = FileField('Image')
-
-class CommentForm(FlaskForm):
-    content = TextAreaField('Comment', validators=[DataRequired(), Length(min=1, max=1000)])

@@ -18,38 +18,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Comments Section -->
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title mb-4">Comments</h4>
-                    
-                    <!-- Comment Form -->
-                    <form method="POST" action="{{ url_for('add_comment', problem_id=problem.id) }}" class="mb-4">
-                        {{ form.hidden_tag() }}
-                        <div class="mb-3">
-                            {{ form.content(class="form-control", rows="3", placeholder="Add a comment...") }}
-                        </div>
-                        <button type="submit" class="btn btn-primary">Post Comment</button>
-                    </form>
-
-                    <!-- Comments List -->
-                    {% if problem.comments %}
-                        {% for comment in problem.comments|sort(attribute='created_at', reverse=true) %}
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <p class="card-text">{{ comment.content }}</p>
-                                <div class="text-muted small">
-                                    {{ comment.author.username }} - {{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-muted">No comments yet. Be the first to comment!</p>
-                    {% endif %}
-                </div>
-            </div>
         </div>
     </div>
 </div>
