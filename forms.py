@@ -16,11 +16,12 @@ class RegisterForm(FlaskForm):
 class ProblemForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     subject = SelectField('Subject', choices=[
-        ('math', 'Mathematics'),
-        ('physics', 'Physics'),
-        ('chemistry', 'Chemistry'),
-        ('biology', 'Biology'),
-        ('other', 'Other')
+        ('counting_and_probability', 'Counting & Probability'),
+        ('number_theory', 'Number Theory'),
+        ('algebra', 'Algebra'),
+        ('geometry', 'Geometry'),
+        ('trigonometry', 'Trigonometry'),
+        ('exponent', 'Exponents & Powers')
     ])
     description = TextAreaField('Description')
     image = FileField('Image')

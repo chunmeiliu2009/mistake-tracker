@@ -2,21 +2,80 @@
 
 {% block content %}
 <div class="px-4 py-5 my-5 text-center">
-    <h1 class="display-5 fw-bold">Learn from Your Mistakes</h1>
+    <h1 class="display-5 fw-bold">Master Mathematics</h1>
     <div class="col-lg-6 mx-auto">
         <p class="lead mb-4">
-            Track your homework mistakes, understand where you went wrong, and improve your learning journey.
+            Track your math homework mistakes, understand where you went wrong, and improve your problem-solving skills.
         </p>
         {% if not current_user.is_authenticated %}
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
             <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 gap-3">Get Started</a>
             <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg px-4">Login</a>
         </div>
-        {% else %}
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg px-4">Go to Dashboard</a>
-        </div>
         {% endif %}
+        
+        <div class="row g-4 py-4">
+            <div class="col-md-4">
+                <a href="{{ url_for('new_problem', category='counting_and_probability') }}" class="text-decoration-none">
+                    <div class="card h-100 bg-dark">
+                        <div class="card-body">
+                            <i data-feather="hash" class="mb-3"></i>
+                            <h5 class="card-title">Counting & Probability</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ url_for('new_problem', category='number_theory') }}" class="text-decoration-none">
+                    <div class="card h-100 bg-dark">
+                        <div class="card-body">
+                            <i data-feather="divide" class="mb-3"></i>
+                            <h5 class="card-title">Number Theory</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ url_for('new_problem', category='algebra') }}" class="text-decoration-none">
+                    <div class="card h-100 bg-dark">
+                        <div class="card-body">
+                            <i data-feather="x" class="mb-3"></i>
+                            <h5 class="card-title">Algebra</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ url_for('new_problem', category='geometry') }}" class="text-decoration-none">
+                    <div class="card h-100 bg-dark">
+                        <div class="card-body">
+                            <i data-feather="square" class="mb-3"></i>
+                            <h5 class="card-title">Geometry</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ url_for('new_problem', category='trigonometry') }}" class="text-decoration-none">
+                    <div class="card h-100 bg-dark">
+                        <div class="card-body">
+                            <i data-feather="triangle" class="mb-3"></i>
+                            <h5 class="card-title">Trigonometry</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ url_for('new_problem', category='exponent') }}" class="text-decoration-none">
+                    <div class="card h-100 bg-dark">
+                        <div class="card-body">
+                            <i data-feather="star" class="mb-3"></i>
+                            <h5 class="card-title">Exponents & Powers</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

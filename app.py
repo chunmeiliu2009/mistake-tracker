@@ -41,6 +41,11 @@ def dashboard():
 @login_required
 def new_problem():
     form = ProblemForm()
+    if request.method == 'GET':
+        category = request.args.get('category')
+        if category and category in dict(form.subject.choices):
+            form.subject.data = category
+            
     if form.validate_on_submit():
         filename = None
         if form.image.data:
