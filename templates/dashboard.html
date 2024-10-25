@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>My Problems</h2>
+        <h2>My Math Problems</h2>
         <a href="{{ url_for('new_problem') }}" class="btn btn-primary">
             <i data-feather="plus"></i> Add New Problem
         </a>
@@ -12,24 +12,40 @@
     {% if not problems %}
     <div class="text-center py-5">
         <h3>No problems added yet</h3>
-        <p class="text-muted">Start tracking your homework mistakes by adding a new problem.</p>
+        <p class="text-muted">Start tracking your math problems by adding a new one.</p>
+        <div class="mt-4">
+            <a href="{{ url_for('new_problem') }}" class="btn btn-lg btn-outline-primary">
+                <i data-feather="plus"></i> Add Your First Problem
+            </a>
+        </div>
     </div>
     {% else %}
     <div class="row">
         {% for problem in problems %}
         <div class="col-md-6 mb-4">
-            <div class="card">
+            <div class="card h-100">
                 {% if problem.image_path %}
                 <img src="{{ url_for('static', filename='uploads/' + problem.image_path) }}" 
-                     class="card-img-top" alt="Problem image">
+                     class="card-img-top" alt="Problem image" style="max-height: 200px; object-fit: cover;">
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ problem.title }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ problem.subject }}</h6>
+                    <span class="badge bg-info mb-2">
+                        {% set category_map = {
+                            'counting_and_probability': 'Counting & Probability',
+                            'number_theory': 'Number Theory',
+                            'algebra': 'Algebra',
+                            'geometry': 'Geometry',
+                            'trigonometry': 'Trigonometry',
+                            'exponent': 'Exponents & Powers'
+                        } %}
+                        {{ category_map.get(problem.subject, problem.subject) }}
+                    </span>
                     <p class="card-text">{{ problem.description }}</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="text-muted small">Added {{ problem.created_at.strftime('%Y-%m-%d') }}</div>
                         <form action="{{ url_for('delete_problem', problem_id=problem.id) }}" method="POST" 
+                              class="d-inline"
                               onsubmit="return confirm('Are you sure you want to delete this problem? This action cannot be undone.');">
                             <button type="submit" class="btn btn-danger btn-sm">
                                 <i data-feather="trash-2"></i> Delete
