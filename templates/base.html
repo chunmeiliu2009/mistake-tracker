@@ -6,11 +6,62 @@
     <title>Mistake Tracker</title>
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
     <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        /* Custom styles using Bootstrap variables */
+        .navbar {
+            border-bottom: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--bs-primary) !important;
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--bs-primary) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--bs-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .alert {
+            border-left: 4px solid var(--bs-primary);
+        }
+
+        .btn {
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
-<body>
+<body class="bg-dark">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">Mistake Tracker</a>
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i data-feather="book" class="me-2"></i>
+                Mistake Tracker
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -18,14 +69,23 @@
                 <ul class="navbar-nav ms-auto">
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                            <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                                <i data-feather="log-out" class="me-1"></i>
+                                Logout
+                            </a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                            <a class="nav-link" href="{{ url_for('auth.login') }}">
+                                <i data-feather="log-in" class="me-1"></i>
+                                Login
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
+                            <a class="nav-link" href="{{ url_for('auth.register') }}">
+                                <i data-feather="user-plus" class="me-1"></i>
+                                Register
+                            </a>
                         </li>
                     {% endif %}
                 </ul>
@@ -37,7 +97,7 @@
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert alert-info">{{ message }}</div>
+                    <div class="alert alert-info shadow-sm">{{ message }}</div>
                 {% endfor %}
             {% endif %}
         {% endwith %}

@@ -2,35 +2,44 @@
 
 {% block content %}
 <div class="px-4 py-5 my-5 text-center">
-    <h1 class="display-5 fw-bold">Master Your Mistakes</h1>
+    <div class="icon-container mb-4">
+        <i data-feather="book" class="display-1 text-primary"></i>
+    </div>
+    <h1 class="display-5 fw-bold text-primary mb-4">Master Your Mistakes</h1>
     <div class="col-lg-6 mx-auto">
         <p class="lead mb-4">
             Track your homework mistakes across different subjects, understand where you went wrong, and improve your learning journey.
         </p>
         {% if not current_user.is_authenticated %}
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 gap-3">Get Started</a>
-            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg px-4">Login</a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 gap-3">
+                <i data-feather="user-plus" class="me-2"></i>
+                Get Started
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg px-4">
+                <i data-feather="log-in" class="me-2"></i>
+                Login
+            </a>
         </div>
         {% endif %}
         
         <div class="row g-4 py-4">
             {% set icons = {
-                'algebra': 'x',
+                'algebra': 'x-square',
                 'counting_and_probability': 'hash',
-                'geometry': 'square',
-                'number_theory': 'divide',
-                'exponent': 'star',
+                'geometry': 'hexagon',
+                'number_theory': 'divide-circle',
+                'exponent': 'zap',
                 'trigonometry': 'triangle',
                 'physics': 'activity',
-                'chemistry': 'flask',
+                'chemistry': 'droplet',
                 'biology': 'heart'
             } %}
             
             {% for category_id, display_name in categories.items() %}
             <div class="col-md-4">
                 <a href="{{ url_for('category_view', category_name=category_id) }}" class="text-decoration-none">
-                    <div class="card h-100 bg-dark category-card">
+                    <div class="card h-100 category-card">
                         <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
                             <div class="icon-container mb-3">
                                 <i data-feather="{{ icons[category_id] }}" class="category-icon"></i>
@@ -47,16 +56,16 @@
 
 <style>
 .category-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-    border: 1px solid var(--bs-dark);
-    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+    background: rgba(var(--bs-dark-rgb), 0.6) !important;
+    backdrop-filter: blur(10px);
 }
 
 .category-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 25px rgba(var(--bs-primary-rgb), 0.15);
     border-color: var(--bs-primary);
-    background: var(--bs-dark) !important;
 }
 
 .icon-container {
@@ -66,11 +75,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
 }
 
 .category-card:hover .icon-container {
     background: rgba(var(--bs-primary-rgb), 0.2);
+    transform: scale(1.1);
 }
 
 .category-icon {
@@ -78,6 +88,11 @@
     height: 32px;
     stroke-width: 2;
     color: var(--bs-primary);
+}
+
+.display-1 {
+    width: 64px;
+    height: 64px;
 }
 </style>
 {% endblock %}
