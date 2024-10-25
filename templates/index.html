@@ -15,66 +15,27 @@
         {% endif %}
         
         <div class="row g-4 py-4">
+            {% set icons = {
+                'counting_and_probability': 'hash',
+                'number_theory': 'divide',
+                'algebra': 'x',
+                'geometry': 'square',
+                'trigonometry': 'triangle',
+                'exponent': 'star'
+            } %}
+            
+            {% for category_id, display_name in categories.items() %}
             <div class="col-md-4">
-                <a href="{{ url_for('new_problem', category='counting_and_probability') }}" class="text-decoration-none">
+                <a href="{{ url_for('category_view', category_name=category_id) }}" class="text-decoration-none">
                     <div class="card h-100 bg-dark">
                         <div class="card-body">
-                            <i data-feather="hash" class="mb-3"></i>
-                            <h5 class="card-title">Counting & Probability</h5>
+                            <i data-feather="{{ icons[category_id] }}" class="mb-3"></i>
+                            <h5 class="card-title">{{ display_name }}</h5>
                         </div>
                     </div>
                 </a>
             </div>
-            <div class="col-md-4">
-                <a href="{{ url_for('new_problem', category='number_theory') }}" class="text-decoration-none">
-                    <div class="card h-100 bg-dark">
-                        <div class="card-body">
-                            <i data-feather="divide" class="mb-3"></i>
-                            <h5 class="card-title">Number Theory</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-4">
-                <a href="{{ url_for('new_problem', category='algebra') }}" class="text-decoration-none">
-                    <div class="card h-100 bg-dark">
-                        <div class="card-body">
-                            <i data-feather="x" class="mb-3"></i>
-                            <h5 class="card-title">Algebra</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-4">
-                <a href="{{ url_for('new_problem', category='geometry') }}" class="text-decoration-none">
-                    <div class="card h-100 bg-dark">
-                        <div class="card-body">
-                            <i data-feather="square" class="mb-3"></i>
-                            <h5 class="card-title">Geometry</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-4">
-                <a href="{{ url_for('new_problem', category='trigonometry') }}" class="text-decoration-none">
-                    <div class="card h-100 bg-dark">
-                        <div class="card-body">
-                            <i data-feather="triangle" class="mb-3"></i>
-                            <h5 class="card-title">Trigonometry</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-4">
-                <a href="{{ url_for('new_problem', category='exponent') }}" class="text-decoration-none">
-                    <div class="card h-100 bg-dark">
-                        <div class="card-body">
-                            <i data-feather="star" class="mb-3"></i>
-                            <h5 class="card-title">Exponents & Powers</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </div>

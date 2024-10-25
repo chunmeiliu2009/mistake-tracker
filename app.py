@@ -23,19 +23,39 @@ login_manager.login_view = 'auth.login'
 app.register_blueprint(auth)
 app.register_blueprint(google_auth)
 
+# Category mapping
+CATEGORY_MAP = {
+    'counting_and_probability': 'Counting & Probability',
+    'number_theory': 'Number Theory',
+    'algebra': 'Algebra',
+    'geometry': 'Geometry',
+    'trigonometry': 'Trigonometry',
+    'exponent': 'Exponents & Powers'
+}
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', categories=CATEGORY_MAP)
 
-@app.route('/dashboard')
+@app.route('/category/<category_name>')
 @login_required
-def dashboard():
-    problems = Problem.query.filter_by(user_id=current_user.id).order_by(Problem.created_at.desc()).all()
-    return render_template('dashboard.html', problems=problems)
+def category_view(category_name):
+    if category_name not in CATEGORY_MAP:
+        abort(404)
+    
+    problems = Problem.query.filter_by(
+        user_id=current_user.id,
+        subject=category_name
+    ).order_by(Problem.created_at.desc()).all()
+    
+    return render_template('category.html', 
+                         category_name=category_name,
+                         category_display_name=CATEGORY_MAP[category_name],
+                         problems=problems)
 
 @app.route('/problem/new', methods=['GET', 'POST'])
 @login_required
@@ -43,7 +63,7 @@ def new_problem():
     form = ProblemForm()
     if request.method == 'GET':
         category = request.args.get('category')
-        if category and category in dict(form.subject.choices):
+        if category and category in CATEGORY_MAP:
             form.subject.data = category
             
     if form.validate_on_submit():
@@ -61,7 +81,7 @@ def new_problem():
         db.session.add(problem)
         db.session.commit()
         flash('Problem added successfully')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('category_view', category_name=form.subject.data))
     return render_template('problem.html', form=form)
 
 @app.route('/problem/<int:problem_id>/delete', methods=['POST'])
@@ -73,6 +93,8 @@ def delete_problem(problem_id):
     if problem.user_id != current_user.id:
         abort(403)  # Forbidden
     
+    category = problem.subject
+    
     # Delete the associated image if it exists
     if problem.image_path:
         image_path = os.path.join('static/uploads', problem.image_path)
@@ -82,7 +104,7 @@ def delete_problem(problem_id):
     db.session.delete(problem)
     db.session.commit()
     flash('Problem deleted successfully')
-    return redirect(url_for('dashboard'))
+    return redirect(url_for('category_view', category_name=category))
 
 # Create static/uploads directory if it doesn't exist
 os.makedirs('static/uploads', exist_ok=True)
