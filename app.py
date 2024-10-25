@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, abort
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_required, current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
 from database import db
@@ -58,12 +58,6 @@ def new_problem():
         flash('Problem added successfully')
         return redirect(url_for('dashboard'))
     return render_template('problem.html', form=form)
-
-@app.route('/problem/<int:problem_id>')
-@login_required
-def view_problem(problem_id):
-    problem = Problem.query.get_or_404(problem_id)
-    return render_template('view_problem.html', problem=problem)
 
 # Create static/uploads directory if it doesn't exist
 os.makedirs('static/uploads', exist_ok=True)
