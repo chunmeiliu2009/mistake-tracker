@@ -3,8 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash, abo
 from flask_login import LoginManager, login_required, current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
 from database import db
-from models import User, Problem, Comment
-from forms import ProblemForm, CommentForm
+from models import User, Problem
+from forms import ProblemForm
 from utils import save_file
 from auth import auth
 from google_auth import google_auth
@@ -60,13 +60,6 @@ def category_view(category_name):
                          category_display_name=CATEGORY_MAP[category_name],
                          problems=problems)
 
-@app.route('/problem/<int:problem_id>')
-@login_required
-def view_problem(problem_id):
-    problem = Problem.query.get_or_404(problem_id)
-    comment_form = CommentForm()
-    return render_template('view_problem.html', problem=problem, comment_form=comment_form)
-
 @app.route('/problem/new', methods=['GET', 'POST'])
 @login_required
 def new_problem():
@@ -94,46 +87,18 @@ def new_problem():
         return redirect(url_for('category_view', category_name=form.subject.data))
     return render_template('problem.html', form=form)
 
-@app.route('/problem/<int:problem_id>/comment', methods=['POST'])
-@login_required
-def add_comment(problem_id):
-    problem = Problem.query.get_or_404(problem_id)
-    form = CommentForm()
-    
-    if form.validate_on_submit():
-        comment = Comment(
-            content=form.content.data,
-            user_id=current_user.id,
-            problem_id=problem_id
-        )
-        db.session.add(comment)
-        db.session.commit()
-        flash('Comment added successfully')
-    return redirect(url_for('view_problem', problem_id=problem_id))
-
-@app.route('/comment/<int:comment_id>/delete', methods=['POST'])
-@login_required
-def delete_comment(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
-    if comment.user_id != current_user.id:
-        abort(403)
-    
-    problem_id = comment.problem_id
-    db.session.delete(comment)
-    db.session.commit()
-    flash('Comment deleted successfully')
-    return redirect(url_for('view_problem', problem_id=problem_id))
-
 @app.route('/problem/<int:problem_id>/delete', methods=['POST'])
 @login_required
 def delete_problem(problem_id):
     problem = Problem.query.get_or_404(problem_id)
     
+    # Check if the current user owns the problem
     if problem.user_id != current_user.id:
         abort(403)  # Forbidden
     
     category = problem.subject
     
+    # Delete the associated image if it exists
     if problem.image_path:
         image_path = os.path.join('static/uploads', problem.image_path)
         if os.path.exists(image_path):
