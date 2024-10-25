@@ -31,3 +31,18 @@ class ProblemForm(FlaskForm):
 
 class CommentForm(FlaskForm):
     content = TextAreaField('Add a comment', validators=[DataRequired(), Length(min=1, max=1000)])
+
+class StudyGuideForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired(), Length(min=3, max=200)])
+    subject = SelectField('Subject', choices=[
+        ('algebra', 'Algebra'),
+        ('counting_and_probability', 'Counting & Probability'),
+        ('geometry', 'Geometry'),
+        ('number_theory', 'Number Theory'),
+        ('exponent', 'Exponents'),
+        ('trigonometry', 'Trigonometry'),
+        ('physics', 'Physics'),
+        ('chemistry', 'Chemistry'),
+        ('biology', 'Biology')
+    ])
+    content = TextAreaField('Content', validators=[DataRequired(), Length(min=10)])
