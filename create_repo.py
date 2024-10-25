@@ -12,7 +12,7 @@ def setup_github_repository():
 
         # Test token validity
         headers = {
-            "Authorization": f"Bearer {github_token}",
+            "Authorization": f"token {github_token}",  # Changed to use 'token' instead of 'Bearer'
             "Accept": "application/vnd.github.v3+json"
         }
         test_response = requests.get("https://api.github.com/user", headers=headers)
@@ -20,29 +20,26 @@ def setup_github_repository():
             print(f"Invalid GitHub token: {test_response.json().get('message', '')}")
             return False
 
-        # GitHub API endpoint for creating a repository
-        url = "https://api.github.com/user/repos"
+        # Get username from the test response
+        username = test_response.json()['login']
+        repo_name = "mistake-tracker"
         
-        # Repository configuration
-        data = {
-            "name": "mistake-tracker",
-            "description": "A web platform for students to track and learn from their homework mistakes",
-            "private": False,
-            "auto_init": False
-        }
-
-        # Create the repository
-        response = requests.post(url, json=data, headers=headers)
-        if response.status_code != 201:
-            if response.status_code == 422:  # Repository already exists
-                print("Repository already exists, proceeding with push...")
-            else:
-                print(f"Failed to create repository: {response.json().get('message', '')}")
+        # Check if repository exists
+        repo_check = requests.get(f"https://api.github.com/repos/{username}/{repo_name}", headers=headers)
+        
+        if repo_check.status_code != 200:
+            # Create repository if it doesn't exist
+            data = {
+                "name": repo_name,
+                "description": "A web platform for students to track and learn from their homework mistakes",
+                "private": False,
+                "auto_init": False
+            }
+            create_response = requests.post("https://api.github.com/user/repos", json=data, headers=headers)
+            if create_response.status_code != 201:
+                print(f"Failed to create repository: {create_response.json().get('message', '')}")
                 return False
 
-        # Get the repository URL
-        repo_url = f"https://github.com/{test_response.json()['login']}/mistake-tracker.git"
-        
         # Configure git
         subprocess.run(['git', 'config', '--global', 'user.email', "replit@example.com"])
         subprocess.run(['git', 'config', '--global', 'user.name', "Replit User"])
@@ -50,30 +47,28 @@ def setup_github_repository():
         # Initialize git if not already initialized
         if not os.path.exists('.git'):
             subprocess.run(['git', 'init'])
-        
-        # Remove existing remote if it exists
-        subprocess.run(['git', 'remote', 'remove', 'origin'], stderr=subprocess.DEVNULL)
-        
-        # Add new remote with token authentication
-        repo_url_with_token = f"https://oauth2:{github_token}@github.com/{test_response.json()['login']}/mistake-tracker.git"
-        subprocess.run(['git', 'remote', 'add', 'origin', repo_url_with_token])
-        
-        # Create .gitkeep in uploads directory
+
+        # Ensure uploads directory exists with .gitkeep
         os.makedirs('static/uploads', exist_ok=True)
         with open('static/uploads/.gitkeep', 'w') as f:
             pass
+
+        # Set up remote
+        remote_url = f"https://{github_token}@github.com/{username}/{repo_name}.git"
         
-        # Add all files
+        # Remove existing remote if it exists
+        subprocess.run(['git', 'remote', 'remove', 'origin'], stderr=subprocess.DEVNULL)
+        subprocess.run(['git', 'remote', 'add', 'origin', remote_url])
+
+        # Add and commit all files
         subprocess.run(['git', 'add', '.'])
-        
-        # Commit changes
-        subprocess.run(['git', 'commit', '-m', 'Initial commit: Mistake Tracker web application'])
-        
+        subprocess.run(['git', 'commit', '-m', 'Update: Fixed Feather icon and improved repository setup'])
+
         # Force push to main branch
-        result = subprocess.run(['git', 'push', '-f', '-u', 'origin', 'main'])
+        push_result = subprocess.run(['git', 'push', '-f', 'origin', 'main'])
         
-        if result.returncode == 0:
-            print(f"Successfully pushed code to {repo_url}")
+        if push_result.returncode == 0:
+            print(f"Successfully pushed code to https://github.com/{username}/{repo_name}")
             return True
         else:
             print("Failed to push code to GitHub")
@@ -86,6 +81,6 @@ def setup_github_repository():
 if __name__ == "__main__":
     success = setup_github_repository()
     if success:
-        print("Repository setup completed successfully!")
+        print("Repository setup and code push completed successfully!")
     else:
-        print("Failed to setup repository.")
+        print("Failed to setup repository or push code.")
