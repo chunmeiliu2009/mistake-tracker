@@ -1,10 +1,10 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, abort
 from flask_login import LoginManager, login_required, current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
 from database import db
-from models import User, Problem
-from forms import ProblemForm
+from models import User, Problem, Comment
+from forms import ProblemForm, CommentForm
 from utils import save_file
 from auth import auth
 from google_auth import google_auth
@@ -58,6 +58,30 @@ def new_problem():
         flash('Problem added successfully')
         return redirect(url_for('dashboard'))
     return render_template('problem.html', form=form)
+
+@app.route('/problem/<int:problem_id>')
+@login_required
+def view_problem(problem_id):
+    problem = Problem.query.get_or_404(problem_id)
+    form = CommentForm()
+    return render_template('view_problem.html', problem=problem, form=form)
+
+@app.route('/problem/<int:problem_id>/comment', methods=['POST'])
+@login_required
+def add_comment(problem_id):
+    problem = Problem.query.get_or_404(problem_id)
+    form = CommentForm()
+    
+    if form.validate_on_submit():
+        comment = Comment(
+            content=form.content.data,
+            user_id=current_user.id,
+            problem_id=problem_id
+        )
+        db.session.add(comment)
+        db.session.commit()
+        flash('Comment added successfully')
+    return redirect(url_for('view_problem', problem_id=problem_id))
 
 # Create static/uploads directory if it doesn't exist
 os.makedirs('static/uploads', exist_ok=True)
