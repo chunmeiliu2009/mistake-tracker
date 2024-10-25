@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, abort
 from flask_login import LoginManager, login_required, current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
 from database import db
@@ -58,6 +58,26 @@ def new_problem():
         flash('Problem added successfully')
         return redirect(url_for('dashboard'))
     return render_template('problem.html', form=form)
+
+@app.route('/problem/<int:problem_id>/delete', methods=['POST'])
+@login_required
+def delete_problem(problem_id):
+    problem = Problem.query.get_or_404(problem_id)
+    
+    # Check if the current user owns the problem
+    if problem.user_id != current_user.id:
+        abort(403)  # Forbidden
+    
+    # Delete the associated image if it exists
+    if problem.image_path:
+        image_path = os.path.join('static/uploads', problem.image_path)
+        if os.path.exists(image_path):
+            os.remove(image_path)
+    
+    db.session.delete(problem)
+    db.session.commit()
+    flash('Problem deleted successfully')
+    return redirect(url_for('dashboard'))
 
 # Create static/uploads directory if it doesn't exist
 os.makedirs('static/uploads', exist_ok=True)
